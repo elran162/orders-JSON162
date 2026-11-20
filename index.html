@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בדיקת JSONBin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-body: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success-bg: #f0fdf4;
+    --success-text: #15803d;
+    --error-bg: #fef2f2;
+    --error-text: #b91c1c;
+    --radius: 12px;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    margin: 0;
+    padding: 32px 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 800px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+
+  /* Header Setup & Logo Left */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--bg-body);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+
+  .header-titles h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .header-titles p {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #eef2ff;
+    color: var(--primary);
+    border-radius: 10px;
+  }
+
+  .logo svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Form Controls & Inputs */
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    direction: ltr;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  input[type=text]:focus, input[type=password]:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  }
+
+  /* Section Styling */
+  .section {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  /* Custom File Input */
+  input[type=file] {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  input[type=file]::file-selector-button {
+    background: #e2e8f0;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 12px;
+    transition: background 0.2s;
+  }
+
+  input[type=file]::file-selector-button:hover {
+    background: #cbd5e1;
+  }
+
+  /* Buttons Group */
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+  }
+
+  button:hover { background-color: var(--primary-hover); }
+  button:active { transform: scale(0.98); }
+
+  button.secondary {
+    background-color: #ffffff;
+    color: var(--text-main);
+    border: 1px solid var(--border);
+  }
+
+  button.secondary:hover {
+    background-color: #f1f5f9;
+  }
+
+  /* Message Boxes */
+  #msg {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: none;
+  }
+
+  #msg:not(:empty) {
+    display: block;
+  }
+
+  .ok {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid #bbf7d0;
+  }
+
+  .err {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid #fecaca;
+  }
+
+  #count {
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  /* Table Styling */
+  .wrap {
+    overflow-x: auto;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    background: white;
+  }
+
+  th, td {
+    padding: 10px 14px;
+    text-align: right;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background-color: #f8fafc; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-titles">
+      <h2>בדיקת JSONBin</h2>
+      <p>ניהול, סנכרון וגיבוי נתוני JSON בענן</p>
+    </div>
+    <!-- לוגו ענן ו-JSON בצד שמאל למעלה -->
+    <div class="logo" title="JSONBin Integration">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="binId">Bin ID</label>
+    <input type="text" id="binId" value="6af230cfffd5d16053b4b664">
+  </div>
+
+  <div class="field">
+    <label for="key">Master Key (לא נשמר בשום מקום)</label>
+    <input type="password" id="key" placeholder="הדבק כאן את המפתח">
+  </div>
+
+  <div class="section">
+    <h3>1. קובץ מהמכשיר</h3>
+    <input type="file" id="file" accept=".json,application/json">
+  </div>
+
+  <div class="section">
+    <h3>2. ענן (JSONBin)</h3>
+    <div class="btn-group">
+      <button onclick="cloudSave()">שמור בענן</button>
+      <button onclick="cloudLoad(true)">טען מהענן</button>
+      <button class="secondary" onclick="cloudLoad(false)">נסה בלי מפתח</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>3. הורדה</h3>
+    <button class="secondary" onclick="downloadJson()">הורד קובץ JSON</button>
+  </div>
+
+  <div id="msg"></div>
+  <div id="count"></div>
+  <div class="wrap"><table id="tbl"></table></div>
+</div>
+
+<script>
+let orders = null;   // מערך ההזמנות הנוכחי (כמו בקובץ של התוכנה)
+const $ = id => document.getElementById(id);
+
+const LABELS = {
+  id: 'מזהה רשומה',
+  date: 'תאריך',
+  time: 'שעה',
+  orderNumber: 'מספר הזמנה',
+  vehicleNumber: 'מספר רכב',
+  vehicleType: 'סוג רכב',
+  customerName: 'שם לקוח',
+  phoneNumber: 'טלפון',
+  cardNumber: 'מספר כרטיס',
+  details: 'פרטים',
+  status: 'סטטוס',
+  availableInIsrael: 'זמין בארץ',
+  carCanContinue: 'רכב יכול להמשיך בנסיעה',
+  expectedArrivalDate: 'צפי הגעה',
+  approvalNumber: 'מספר אישור',
+  customerNotified: 'הלקוח עודכן',
+  customerScheduled: 'נקבע תור',
+  customerScheduledDate: 'תאריך תור',
+  customerScheduledTime: 'שעת תור',
+  customerSummary: 'סיכום לקוח'
+};
+const labelOf = c => LABELS[c] || c;
+
+function say(text, ok) { $('msg').className = ok ? 'ok' : 'err'; $('msg').textContent = text; }
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function fmtVal(v) {
+  if (typeof v === 'boolean') return v ? 'כן' : 'לא';
+  return esc(v);
+}
+function show(arr) {
+  orders = arr;
+  const cols = [];
+  arr.forEach(o => Object.keys(o).forEach(k => { if (!cols.includes(k)) cols.push(k); }));
+  $('count').textContent = 'מספר הזמנות: ' + arr.length;
+  $('tbl').innerHTML = arr.length
+    ? '<tr>' + cols.map(c => '<th>' + esc(labelOf(c)) + '</th>').join('') + '</tr>' +
+      arr.map(o => '<tr>' + cols.map(c => '<td>' + fmtVal(o[c]) + '</td>').join('') + '</tr>').join('')
+    : '';
+}
+// מקבל גם מערך ישיר (הקובץ של התוכנה) וגם {orders:[...]}
+function extract(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.orders)) return data.orders;
+  return null;
+}
+
+// קריאת קובץ מהמכשיר
+$('file').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    const arr = extract(JSON.parse(await f.text()));
+    if (!arr) return say('הקובץ לא במבנה צפוי (מערך של הזמנות)', false);
+    show(arr);
+    say('נטען הקובץ ' + f.name + '. עכשיו אפשר ללחוץ "שמור בענן"', true);
+  } catch (err) { say('קובץ JSON לא תקין: ' + err.message, false); }
+});
+
+function url() { return 'https://api.jsonbin.io/v3/b/' + $('binId').value.trim(); }
+
+async function cloudSave() {
+  if (!orders) return say('קודם בחר קובץ או טען מהענן', false);
+  if (!$('key').value.trim()) return say('חסר מפתח', false);
+  if (!confirm('לשמור ' + orders.length + ' הזמנות בענן? זה יחליף את התוכן הקיים ב-Bin.')) return;
+  say('שומר...', true);
+  try {
+    const res = await fetch(url(), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': $('key').value.trim() },
+      body: JSON.stringify({ orders })
+    });
+    const data = await res.json();
+    if (!res.ok) return say('שגיאה: ' + (data.message || res.status), false);
+    say('נשמר בענן (' + orders.length + ' הזמנות)', true);
+  } catch (e) { say('שגיאת רשת: ' + e.message, false); }
+}
+
+async function cloudLoad(useKey) {
+  say('טוען...', true);
+  const headers = {};
+  if (useKey) headers['X-Master-Key'] = $('key').value.trim();
+  try {
+    const res = await fetch(url() + '/latest', { headers });
+    const data = await res.json();
+    if (!res.ok) {
+      return say(useKey ? 'שגיאה: ' + (data.message || res.status)
+                        : 'נחסם, כמו שצריך! בלי מפתח אין גישה (' + (data.message || res.status) + ')', useKey ? false : true);
+    }
+    const arr = extract(data.record);
+    if (!arr) return say('המבנה בענן לא מוכר', false);
+    show(arr);
+    say('נטענו ' + arr.length + ' הזמנות מהענן', true);
+  } catch (e) { say('שגיאת רשת: ' + e.message, false); }
+}
+
+// מוריד מערך ישיר, באותו מבנה שהתוכנה שלך מייצאת
+function downloadJson() {
+  if (!orders) return say('אין מה להוריד. בחר קובץ או טען מהענן', false);
+  const blob = new Blob([JSON.stringify(orders, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'orders.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+  say('הקובץ orders.json הורד', true);
+}
+</script>
+</body>
+</html>
