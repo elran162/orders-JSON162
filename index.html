@@ -272,7 +272,12 @@
 
   <div class="field">
     <label for="key">Master Key (לא נשמר בשום מקום)</label>
-    <input type="password" id="key" placeholder="הדבק כאן את המפתח">
+    <input type="password" id="key" placeholder="הדבק כאן את Master Key">
+  </div>
+
+  <div class="field">
+    <label for="accessKey">Access Key (לא נשמר בשום מקום)</label>
+    <input type="password" id="accessKey" placeholder="הדבק כאן את Access Key">
   </div>
 
   <div class="section">
@@ -352,6 +357,15 @@ function extract(data) {
   return null;
 }
 
+// מחזיר את המפתח הפעיל ואת הכותר המתאים (Access Key בעדיפות אם מולא)
+function getAuthHeader() {
+  const access = $('accessKey').value.trim();
+  const master = $('key').value.trim();
+  if (access) return { name: 'X-Access-Key', value: access };
+  if (master) return { name: 'X-Master-Key', value: master };
+  return null;
+}
+
 // קריאת קובץ מהמכשיר
 $('file').addEventListener('change', async e => {
   const f = e.target.files[0];
@@ -368,13 +382,17 @@ function url() { return 'https://api.jsonbin.io/v3/b/' + $('binId').value.trim()
 
 async function cloudSave() {
   if (!orders) return say('קודם בחר קובץ או טען מהענן', false);
-  if (!$('key').value.trim()) return say('חסר מפתח', false);
+  const auth = getAuthHeader();
+  if (!auth) return say('חסר מפתח (מלא Master Key או Access Key)', false);
   if (!confirm('לשמור ' + orders.length + ' הזמנות בענן? זה יחליף את התוכן הקיים ב-Bin.')) return;
   say('שומר...', true);
   try {
     const res = await fetch(url(), {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': $('key').value.trim() },
+      headers: {
+        'Content-Type': 'application/json',
+        [auth.name]: auth.value
+      },
       body: JSON.stringify({ orders })
     });
     const data = await res.json();
@@ -386,7 +404,11 @@ async function cloudSave() {
 async function cloudLoad(useKey) {
   say('טוען...', true);
   const headers = {};
-  if (useKey) headers['X-Master-Key'] = $('key').value.trim();
+  if (useKey) {
+    const auth = getAuthHeader();
+    if (auth) headers[auth.name] = auth.value;
+    else headers['X-Access-Key'] = '';
+  }
   try {
     const res = await fetch(url() + '/latest', { headers });
     const data = await res.json();
